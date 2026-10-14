@@ -1,0 +1,26 @@
+{
+ "demos": [
+  {
+   "id": "attack",
+   "title": "ARP MitM attack (synthetic LAN)",
+   "blurb": "A small office LAN. A smart plug takes over an IP via DHCP, the printer's NIC is replaced, a MacBook port-scans the NVR, then a Kali VM runs an Ettercap-style ARP poisoning attack.",
+   "file": "data/demo-attack.json",
+   "packets": 41123,
+   "verdict": "confirmed_spoofing"
+  },
+  {
+   "id": "benign",
+   "title": "Home network, no attack (synthetic)",
+   "blurb": "Another day on the same LAN: a new device joins via DHCP and the ISP router is swapped for a backup router with a different MAC. No attack.",
+   "file": "data/demo-benign.json",
+   "packets": 22759,
+   "verdict": "likely_legitimate"
+  }
+ ],
+ "methods": {
+  "rules": "Rules only",
+  "kitsune_p99": "Kitsune only (p99 x 1.1)",
+  "kitsune_max": "Kitsune only (max x 1.1, plan rule)",
+  "combined": "Combined (ARPGuard)"
+ }
+}

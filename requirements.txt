@@ -1,0 +1,4 @@
+# Runtime (also what Vercel installs for the API function)
+numpy>=1.26
+fastapi>=0.115
+anthropic>=1.13

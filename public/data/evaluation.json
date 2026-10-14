@@ -1,0 +1,222 @@
+[
+ {
+  "capture": "arp_mitm_synthetic.pcap",
+  "packets": 41123,
+  "evaluated_packets": 28787,
+  "evaluated_from_t": 299.242,
+  "malicious_packets": 16194,
+  "attack_start_t": 449.91,
+  "kitsune": {
+   "fm_grace": 2056,
+   "ad_grace": 10280,
+   "margin": 1.1,
+   "threshold": 0.11599724509624576,
+   "threshold_mode": "quantile",
+   "quantile": 0.99,
+   "threshold_max_rule": 0.22333169232403524,
+   "calibration_packets": 2057,
+   "calibration_median": 0.012300253872504453,
+   "calibration_max": 0.2030288112036684,
+   "features": 100,
+   "autoencoders": 15
+  },
+  "methods": {
+   "rules": {
+    "tp": 16133,
+    "fp": 136,
+    "fn": 61,
+    "tn": 12457,
+    "detection_rate": 0.9962,
+    "fpr": 0.0108,
+    "precision": 0.9916,
+    "recall": 0.9962,
+    "f1": 0.9939,
+    "time_to_detect_s": 0.19
+   },
+   "kitsune_p99": {
+    "tp": 10090,
+    "fp": 4227,
+    "fn": 6104,
+    "tn": 8366,
+    "detection_rate": 0.6231,
+    "fpr": 0.33566,
+    "precision": 0.7048,
+    "recall": 0.6231,
+    "f1": 0.6614,
+    "time_to_detect_s": 0.102
+   },
+   "kitsune_max": {
+    "tp": 4985,
+    "fp": 1697,
+    "fn": 11209,
+    "tn": 10896,
+    "detection_rate": 0.3078,
+    "fpr": 0.13476,
+    "precision": 0.746,
+    "recall": 0.3078,
+    "f1": 0.4358,
+    "time_to_detect_s": 3.009
+   },
+   "combined": {
+    "tp": 15921,
+    "fp": 0,
+    "fn": 273,
+    "tn": 12593,
+    "detection_rate": 0.9831,
+    "fpr": 0.0,
+    "precision": 1.0,
+    "recall": 0.9831,
+    "f1": 0.9915,
+    "time_to_detect_s": 2.3
+   }
+  },
+  "incidents": [
+   {
+    "id": 1,
+    "kind": "arp",
+    "actor": "24:0a:c4:9d:33:12",
+    "first_t": 332.034,
+    "verdict": "likely_legitimate",
+    "detect_t": null,
+    "related_incident": null
+   },
+   {
+    "id": 2,
+    "kind": "arp",
+    "actor": "00:80:77:5b:99:30",
+    "first_t": 384.91,
+    "verdict": "likely_legitimate",
+    "detect_t": null,
+    "related_incident": null
+   },
+   {
+    "id": 3,
+    "kind": "kitsune",
+    "actor": null,
+    "first_t": 410.719,
+    "verdict": "anomaly_not_arp",
+    "detect_t": null,
+    "related_incident": null
+   },
+   {
+    "id": 4,
+    "kind": "kitsune",
+    "actor": null,
+    "first_t": 430.751,
+    "verdict": "anomaly_not_arp",
+    "detect_t": null,
+    "related_incident": 3
+   },
+   {
+    "id": 5,
+    "kind": "arp",
+    "actor": "00:0c:29:7d:e1:66",
+    "first_t": 450.1,
+    "verdict": "confirmed_spoofing",
+    "detect_t": 452.21,
+    "related_incident": null
+   },
+   {
+    "id": 6,
+    "kind": "kitsune",
+    "actor": null,
+    "first_t": 694.941,
+    "verdict": "anomaly_not_arp",
+    "detect_t": null,
+    "related_incident": 5
+   }
+  ]
+ },
+ {
+  "capture": "home_benign_synthetic.pcap",
+  "packets": 22759,
+  "evaluated_packets": 15933,
+  "evaluated_from_t": 184.054,
+  "malicious_packets": 0,
+  "attack_start_t": null,
+  "kitsune": {
+   "fm_grace": 1137,
+   "ad_grace": 5689,
+   "margin": 1.1,
+   "threshold": 0.15170532463074485,
+   "threshold_mode": "quantile",
+   "quantile": 0.99,
+   "threshold_max_rule": 162.67367168048082,
+   "calibration_packets": 1139,
+   "calibration_median": 0.01947122591124375,
+   "calibration_max": 147.88515607316438,
+   "features": 100,
+   "autoencoders": 14
+  },
+  "methods": {
+   "rules": {
+    "tp": 0,
+    "fp": 2829,
+    "fn": 0,
+    "tn": 13104,
+    "detection_rate": 0.0,
+    "fpr": 0.17756,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "time_to_detect_s": null
+   },
+   "kitsune_p99": {
+    "tp": 0,
+    "fp": 212,
+    "fn": 0,
+    "tn": 15721,
+    "detection_rate": 0.0,
+    "fpr": 0.01331,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "time_to_detect_s": null
+   },
+   "kitsune_max": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 15933,
+    "detection_rate": 0.0,
+    "fpr": 0.0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "time_to_detect_s": null
+   },
+   "combined": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 0,
+    "tn": 15933,
+    "detection_rate": 0.0,
+    "fpr": 0.0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "time_to_detect_s": null
+   }
+  },
+  "incidents": [
+   {
+    "id": 1,
+    "kind": "arp",
+    "actor": "24:0a:c4:9d:33:12",
+    "first_t": 261.884,
+    "verdict": "likely_legitimate",
+    "detect_t": null,
+    "related_incident": null
+   },
+   {
+    "id": 2,
+    "kind": "arp",
+    "actor": "20:4e:7f:c4:08:01",
+    "first_t": 399.5,
+    "verdict": "likely_legitimate",
+    "detect_t": null,
+    "related_incident": null
+   }
+  ]
+ }
+]

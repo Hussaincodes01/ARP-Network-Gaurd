@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.vercel/
+.env
+.env.*
+# Large third-party datasets (fetched with scripts/fetch_kitsune.py)
+data/kitsune/
+data/oui.csv
+# Personal captures from live mode
+data/home_benign.pcap
+*.tsv

@@ -1,0 +1,8 @@
+-r requirements.txt
+# Local extras: live sniffing, the dev server, tests
+scapy>=2.5
+uvicorn>=0.30
+pytest>=8
+httpx>=0.27
+# Optional: SciPy for the original KitNET clustering (a matching pure-NumPy fallback is built in)
+# scipy>=1.11
