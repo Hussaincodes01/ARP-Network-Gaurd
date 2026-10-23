@@ -1,8 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <ellipse cx="32" cy="30" rx="20" ry="24" fill="#efe6d0" stroke="#1f1c18" stroke-width="4"/>
-  <g stroke="#1f1c18" stroke-width="2" opacity=".85">
-    <path d="M30 9 L36 51 M37 9 L43 49 M44 12 L48 44 M23 12 L28 52"/>
-    <path d="M17 22 L50 24 M15 31 L52 33 M17 40 L49 42"/>
-  </g>
-  <path d="M20 56 L44 56 L40 62 L24 62 Z" fill="#cf3b2b" stroke="#1f1c18" stroke-width="3" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd0ff"/><stop offset=".5" stop-color="#2f7fe6"/><stop offset="1" stop-color="#0b4ab0"/></linearGradient></defs>
+  <path d="M16 2 L28 6 V15 C28 23 22 28 16 30 C10 28 4 23 4 15 V6 Z" fill="url(#g)" stroke="#163c75" stroke-width="1.4"/>
+  <text x="16" y="20" text-anchor="middle" font-family="Tahoma,Verdana,sans-serif" font-size="8.5" font-weight="700" fill="#fff">ARP</text>
 </svg>

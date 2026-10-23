@@ -1,6 +1,7 @@
 # Report material
 
-Put screenshots, figures and Wireshark captures for the write-up here.
+Put screenshots, figures and Wireshark captures for the write-up here. `screenshots/` already has
+dashboard screenshots (regenerate them with Playwright or your browser's screenshot tool).
 
 Useful sources in this repo:
 

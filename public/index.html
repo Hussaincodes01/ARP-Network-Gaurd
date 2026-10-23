@@ -1,232 +1,405 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-scheme="blue">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ARPGuard · En Garde</title>
-  <meta name="description" content="AI-assisted ARP spoofing detection: a rule engine, the Kitsune anomaly model and an LLM that explains every alert.">
-  <meta name="theme-color" content="#f4eedf">
+  <title>ARPGuard · ARP Spoofing Detector</title>
+  <meta name="description" content="ARPGuard catches ARP spoofing (man-in-the-middle) attacks on a local network using simple rules, the Kitsune anomaly model and an AI that explains every alert in plain English.">
+  <meta name="theme-color" content="#245edb">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Patrick+Hand&family=Permanent+Marker&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/xp.css">
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <filter id="sketchy" x="-5%" y="-5%" width="110%" height="110%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="1" result="noise">
-        <animate class="boil" attributeName="seed" values="1;2;3;4" dur="0.48s" repeatCount="indefinite" calcMode="discrete"/>
-      </feTurbulence>
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.6" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
-    <filter id="sketchy-still" x="-5%" y="-5%" width="110%" height="110%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="noise"/>
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
-  </defs>
-</svg>
+<a class="skip" href="#w-control">Skip to the dashboard</a>
 
-<a class="skip" href="#main">Skip to the dashboard</a>
+<div class="desktop" id="desktop">
 
-<header class="masthead">
-  <div class="mascot-wrap">
-    <svg id="mascot" viewBox="0 0 260 230" role="img" aria-labelledby="mascot-title">
-      <title id="mascot-title">ARPGuard's fencer mascot</title>
-    </svg>
-    <div class="bubble" id="bubble" aria-live="polite">En garde!</div>
-  </div>
-  <div class="title-block">
-    <p class="kicker">Networking · Module III · Ethernet &amp; ARP</p>
-    <h1><span class="mark">ARP</span>Guard</h1>
-    <p class="tagline">En garde, spoofers. A rule engine, the <em>Kitsune</em> anomaly model and an AI referee watch every ARP reply on the piste.</p>
-    <nav class="modes" role="tablist" aria-label="Mode">
-      <button role="tab" class="mode active" data-mode="replay" aria-selected="true">Replay demo</button>
-      <button role="tab" class="mode" data-mode="upload" aria-selected="false">Upload a capture</button>
-      <button role="tab" class="mode" data-mode="live" aria-selected="false">Live (your LAN)</button>
-    </nav>
-  </div>
-  <div class="scoreboard" aria-label="Verdict">
-    <div class="lamps">
-      <span class="lamp green" id="lamp-green" title="All clear"></span>
-      <span class="lamp white" id="lamp-white" title="Off-target: anomaly or legitimate change"></span>
-      <span class="lamp red" id="lamp-red" title="Touché: spoofing"></span>
+  <main class="desktop-grid">
+    <!-- ======================= left column ======================= -->
+    <div class="col col-left">
+
+      <section class="window" id="w-control" data-title="ARPGuard Control Center" data-icon="shield-blue" style="--order:1">
+        <div class="menubar" role="menubar">
+          <button class="menu-item" data-open="w-help" role="menuitem"><u>H</u>ow it works</button>
+          <button class="menu-item" data-wizard role="menuitem"><u>W</u>elcome guide</button>
+          <button class="menu-item" data-open="w-fixes" role="menuitem"><u>F</u>ix ARP spoofing</button>
+          <button class="menu-item" data-open="w-results" role="menuitem"><u>R</u>esults</button>
+        </div>
+        <div class="window-body">
+          <div class="hero">
+            <i data-icon="shield-blue" data-size="44"></i>
+            <div>
+              <h1>ARPGuard: catches devices that lie about their network address</h1>
+              <p>On a home or office network, any device can falsely announce <q>I am the router</q>. Traffic then flows through the attacker (a <b>man-in-the-middle</b>). ARPGuard spots this by combining simple rules, an anomaly-detecting AI model and a plain-English explanation.</p>
+            </div>
+          </div>
+
+          <div class="tabs" role="tablist" aria-label="Mode">
+            <button role="tab" class="tab active" data-mode="replay" aria-selected="true"><i data-icon="play"></i> Watch the demo</button>
+            <button role="tab" class="tab" data-mode="upload" aria-selected="false"><i data-icon="upload"></i> Analyze my capture</button>
+            <button role="tab" class="tab" data-mode="live" aria-selected="false"><i data-icon="radar"></i> Live monitoring</button>
+          </div>
+          <div class="tab-panel">
+            <div class="mode-panel" id="panel-replay">
+              <div class="field-row">
+                <label for="demo-select">Recording:</label>
+                <select id="demo-select"></select>
+              </div>
+              <p class="muted" id="demo-blurb"></p>
+            </div>
+
+            <div class="mode-panel hidden" id="panel-upload">
+              <form id="upload-form">
+                <label class="dropzone" id="dropzone" for="file-input">
+                  <i data-icon="folder" data-size="32"></i>
+                  <span><b>Choose a capture file</b> (.pcap, .pcapng or .pcap.gz from Wireshark or tcpdump), or drop it here.<br>
+                    <span class="muted">It's analyzed on the server and not stored. Limit 4.4 MB and 60,000 packets.</span></span>
+                  <input type="file" id="file-input" accept=".pcap,.pcapng,.cap,.gz" hidden>
+                </label>
+                <div class="field-row wrap">
+                  <label>Router (gateway) IP: <input type="text" id="gw-input" placeholder="detect automatically" inputmode="decimal" autocomplete="off"></label>
+                  <label class="check"><input type="checkbox" id="kitsune-input" checked> Use the AI anomaly model (slower)</label>
+                  <button type="submit" class="btn default" id="upload-btn" disabled>Analyze</button>
+                </div>
+                <div class="progress hidden" id="upload-progress" role="progressbar" aria-label="Analyzing"><span></span></div>
+                <p class="muted" id="upload-status"></p>
+              </form>
+            </div>
+
+            <div class="mode-panel hidden" id="panel-live">
+              <div id="live-body"><p class="muted">Checking what this server can do…</p></div>
+            </div>
+          </div>
+
+          <fieldset class="group" id="player">
+            <legend>Replay</legend>
+            <div class="player-row">
+              <button class="btn" id="play" aria-label="Play">▶ Play</button>
+              <label for="speed" class="sr-only">Speed</label>
+              <select id="speed" title="Playback speed">
+                <option value="1">1× real time</option>
+                <option value="10" selected>10× faster</option>
+                <option value="30">30× faster</option>
+                <option value="100">100× faster</option>
+              </select>
+              <div class="scrub">
+                <input type="range" id="scrubber" min="0" max="1000" value="0" step="1" aria-label="Recording time">
+                <div class="ticks" id="ticks"></div>
+              </div>
+              <span class="clock" id="clock">0:00 / 0:00</span>
+            </div>
+          </fieldset>
+
+          <fieldset class="group">
+            <legend>What happens in this recording (click a step to jump there)</legend>
+            <ol class="story" id="story"></ol>
+          </fieldset>
+        </div>
+      </section>
+
+      <section class="window" id="w-monitor" data-title="AI Anomaly Monitor (Kitsune)" data-icon="chart" style="--order:4">
+        <div class="window-body">
+          <p class="infobar"><i data-icon="info"></i> <span>This graph shows how <b>strange each moment of traffic looks</b> to the Kitsune AI model. It first <b>learns what normal looks like</b> (gray area). After that, anything above the <b class="red-text">red line</b> is unusual. Flags mark the events in the story.</span></p>
+          <div class="monitor"><canvas id="monitor-canvas" height="230" aria-label="Kitsune anomaly score over time"></canvas></div>
+          <ul class="legend">
+            <li><span class="sw sw-green"></span> anomaly score (higher = stranger)</li>
+            <li><span class="sw sw-red"></span> alarm line (threshold)</li>
+            <li><span class="sw sw-gray"></span> learning normal traffic</li>
+            <li><span class="sw sw-attack"></span> when the attack really happened</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="window" id="w-owners" data-title="Who Owns Each Address?" data-icon="timeline" style="--order:6">
+        <div class="window-body">
+          <p class="infobar"><i data-icon="info"></i> <span>Each row is an IP address, and time runs left to right. The color shows <b>which device (MAC address) claimed it</b>. Red appearing on the router's row means someone is pretending to be the router.</span></p>
+          <div class="defrag"><canvas id="owners-canvas" height="200" aria-label="IP to MAC ownership over time"></canvas></div>
+          <ul class="legend">
+            <li><span class="sw sw-owner"></span> real owner</li>
+            <li><span class="sw sw-attacker"></span> attacker's fake claim</li>
+            <li><span class="sw sw-new"></span> new legitimate owner</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="window" id="w-table" data-title="ARP Table: Address Book of the Network" data-icon="table" style="--order:7">
+        <div class="window-body">
+          <p class="infobar"><i data-icon="info"></i> <span>ARP is the network's address book: it maps each <abbr title="Internet Protocol address, e.g. 192.168.1.10">IP address</abbr> to a device's hardware <abbr title="Media Access Control address: the network card's built-in ID, e.g. 00:0c:29:7d:e1:66">MAC address</abbr>. A <b>red row</b> means a device lied about who owns that IP.</span></p>
+          <div class="listview">
+            <table>
+              <thead><tr><th>IP address</th><th>Claimed by (MAC)</th><th>Device maker</th><th>Changes</th><th>Last claim</th><th>Status</th></tr></thead>
+              <tbody id="arp-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
     </div>
-    <div class="verdict" id="verdict">Loading…</div>
-    <div class="verdict-sub" id="verdict-sub">&nbsp;</div>
-  </div>
-</header>
 
-<section class="panel mode-panel" id="panel-replay">
-  <div class="demo-pick">
-    <label for="demo-select">Capture</label>
-    <select id="demo-select"></select>
-    <p class="blurb" id="demo-blurb"></p>
-  </div>
-</section>
+    <!-- ======================= right column ======================= -->
+    <div class="col col-right">
 
-<section class="panel mode-panel hidden" id="panel-upload">
-  <form id="upload-form" class="upload">
-    <label class="dropzone" id="dropzone" for="file-input">
-      <span class="drop-title">Drop a <code>.pcap</code>, <code>.pcapng</code> or <code>.pcap.gz</code> here</span>
-      <span class="drop-sub">or click to choose. It's analysed on the server and the file isn't stored.</span>
-      <input type="file" id="file-input" accept=".pcap,.pcapng,.cap,.gz" hidden>
-    </label>
-    <div class="upload-opts">
-      <label>Gateway IP <input type="text" id="gw-input" placeholder="auto-detect" inputmode="decimal" autocomplete="off"></label>
-      <label class="check"><input type="checkbox" id="kitsune-input" checked> Run Kitsune (slower, ~700 packets/s)</label>
-      <button type="submit" class="btn primary" id="upload-btn" disabled>Analyse</button>
+      <section class="window" id="w-status" data-title="Security Status" data-icon="shield-green" style="--order:2">
+        <div class="window-body">
+          <div class="status-banner" id="status-banner">
+            <span id="status-icon"></span>
+            <div>
+              <div class="status-title" id="status-title">Loading…</div>
+              <div class="status-sub" id="status-sub"></div>
+            </div>
+          </div>
+          <p class="status-meaning" id="status-meaning"></p>
+          <table class="kv">
+            <tr><th>Packets seen</th><td id="st-packets">0</td></tr>
+            <tr><th>ARP messages</th><td id="st-arp">0</td></tr>
+            <tr><th>Devices on the network</th><td id="st-hosts">0</td></tr>
+            <tr><th>Rule alerts</th><td id="st-alerts">0</td></tr>
+            <tr><th>AI model</th><td id="st-phase">-</td></tr>
+          </table>
+        </div>
+      </section>
+
+      <section class="window" id="w-alerts" data-title="Alerts and Explanations" data-icon="warn" style="--order:3">
+        <div class="window-body">
+          <p class="infobar"><i data-icon="info"></i> <span>Every incident ARPGuard found so far. <b>Click one</b> to read what happened, who is involved and how to fix it, in plain English.</span></p>
+          <div class="listview alerts-list">
+            <table>
+              <thead><tr><th></th><th>#</th><th>Time</th><th>What ARPGuard decided</th></tr></thead>
+              <tbody id="alerts-tbody"></tbody>
+            </table>
+          </div>
+          <div class="details" id="alert-details" aria-live="polite">
+            <p class="muted">No incidents yet. Press <b>▶ Play</b> in the Control Center to start the recording.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="window" id="w-map" data-title="Network Map" data-icon="network" style="--order:5">
+        <div class="window-body">
+          <p class="infobar"><i data-icon="info"></i> <span>Normally every device talks to the internet through the router. During an attack, the arrows turn <b class="red-text">red</b> and the traffic takes a detour through the attacker.</span></p>
+          <svg id="netmap" viewBox="0 0 420 320" role="img" aria-label="Network map"></svg>
+        </div>
+      </section>
+
+      <section class="window" id="w-cmd" data-title="Command Prompt: ARP messages" data-icon="cmd" style="--order:8">
+        <div class="window-body flush">
+          <pre class="console" id="console" aria-label="Recent ARP messages"></pre>
+        </div>
+      </section>
     </div>
-    <p class="hint" id="upload-status">Limit: 4.4 MB per upload (bigger files are gzipped in your browser first) and 60,000 packets. For the full Kitsune dataset, run ARPGuard locally.</p>
-  </form>
-</section>
+  </main>
 
-<section class="panel mode-panel hidden" id="panel-live">
-  <div id="live-body">
-    <p class="hint">Checking what this server can do…</p>
-  </div>
-</section>
+  <!-- ======================= full-width windows ======================= -->
+  <section class="window wide" id="w-results" data-title="Results: Does It Work?" data-icon="results">
+    <div class="window-body">
+      <p class="infobar"><i data-icon="info"></i> <span>We replayed recordings where we know exactly which packets belong to the attack, and counted how often each method was right. No model was trained on this data.</span></p>
+      <div id="results-body"></div>
+    </div>
+  </section>
 
-<section class="controls panel" aria-label="Replay controls">
-  <button class="btn round" id="play" aria-label="Play">▶</button>
-  <div class="speeds" role="group" aria-label="Speed">
-    <button class="chip" data-speed="1">1×</button>
-    <button class="chip active" data-speed="10">10×</button>
-    <button class="chip" data-speed="30">30×</button>
-    <button class="chip" data-speed="100">100×</button>
-  </div>
-  <div class="scrub">
-    <input type="range" id="scrubber" min="0" max="1000" value="0" step="1" aria-label="Capture time">
-    <div class="ticks" id="ticks"></div>
-  </div>
-  <button class="btn" id="next-incident" title="Jump to the next incident">Next incident ⇥</button>
-  <div class="clock"><span id="clock">t = 0.0 s</span><span class="dim" id="clock-total"></span></div>
-</section>
-
-<section class="stats" aria-label="Counters">
-  <div class="stat"><b id="st-packets">0</b><span>packets</span></div>
-  <div class="stat"><b id="st-arp">0</b><span>ARP frames</span></div>
-  <div class="stat"><b id="st-hosts">0</b><span>hosts</span></div>
-  <div class="stat"><b id="st-alerts">0</b><span>rule alerts</span></div>
-  <div class="stat"><b id="st-phase">-</b><span>Kitsune</span></div>
-</section>
-
-<main id="main" class="grid">
-  <div class="col-main">
-    <article class="card" id="card-score">
-      <h2>Kitsune anomaly score <small>reconstruction error per packet, log scale</small></h2>
-      <div class="canvas-wrap"><canvas id="score-canvas" height="260" aria-label="Kitsune score over time"></canvas></div>
-      <p class="legend">
-        <span class="lg ink"></span> score (max per bin)
-        <span class="lg dash"></span> threshold
-        <span class="lg hatch-grey"></span> learning (grace period)
-        <span class="lg hatch-red"></span> attack (ground-truth labels)
-      </p>
-    </article>
-
-    <article class="card" id="card-timeline">
-      <h2>Who owns which IP? <small>IP→MAC binding history</small></h2>
-      <div class="canvas-wrap"><canvas id="timeline-canvas" height="200" aria-label="Binding timeline"></canvas></div>
-    </article>
-
-    <article class="card" id="card-table">
-      <h2>Live ARP table <small>what the hosts' caches are being told</small></h2>
-      <div class="table-wrap">
-        <table class="arp-table">
-          <thead><tr><th>IP</th><th>MAC</th><th>Vendor (OUI)</th><th>Changes</th><th>Last claim</th><th>Status</th></tr></thead>
-          <tbody id="arp-tbody"></tbody>
-        </table>
+  <section class="window wide" id="w-help" data-title="Help and Support: How ARPGuard Works" data-icon="help">
+    <div class="window-body">
+      <div class="tabs" role="tablist" aria-label="Help topics">
+        <button role="tab" class="tab active" data-help="basics" aria-selected="true">The basics</button>
+        <button role="tab" class="tab" data-help="pipeline" aria-selected="false">How it works</button>
+        <button role="tab" class="tab" data-help="verdicts" aria-selected="false">Verdicts</button>
+        <button role="tab" class="tab" data-help="rules" aria-selected="false">The rules</button>
+        <button role="tab" class="tab" data-help="glossary" aria-selected="false">Glossary</button>
       </div>
-    </article>
-  </div>
+      <div class="tab-panel help-panel">
+        <div class="help-page" data-page="basics">
+          <div class="two-col">
+            <div>
+              <h2>What is ARP?</h2>
+              <p>Programs talk to <b>IP addresses</b> (like <code>192.168.1.1</code>), but network cards deliver data to <b>MAC addresses</b> (like <code>50:c7:bf:3a:1c:01</code>). <b>ARP</b> (Address Resolution Protocol) connects the two:</p>
+              <ol>
+                <li>Your laptop shouts to everyone: <q>Who has 192.168.1.1?</q></li>
+                <li>The router answers: <q>192.168.1.1 is at 50:c7:bf:3a:1c:01.</q></li>
+                <li>Your laptop writes that in its <b>ARP cache</b> (its address book).</li>
+              </ol>
+              <h2>What goes wrong?</h2>
+              <p>ARP has <b>no password and no proof</b>. Any device can send an answer, even when nobody asked, and everyone believes it. An attacker keeps saying <q>192.168.1.1 is at <u>my</u> MAC</q>. Your traffic then goes to the attacker, who quietly forwards it so nothing looks broken. This is <b>ARP spoofing</b>, and it lets the attacker read or change your traffic.</p>
+            </div>
+            <div>
+              <h2>How ARPGuard catches it</h2>
+              <div class="helpers">
+                <div class="helper"><i data-icon="table" data-size="32"></i><div><b>1. The rule checker</b><br>Keeps the address book and raises an alarm when an IP suddenly "moves" to another device, especially the router's IP.</div></div>
+                <div class="helper"><i data-icon="chart" data-size="32"></i><div><b>2. The AI anomaly model (Kitsune)</b><br>Learns what normal traffic looks like, then notices when traffic suddenly behaves strangely, for example when it's relayed through an attacker.</div></div>
+                <div class="helper"><i data-icon="shield-green" data-size="32"></i><div><b>3. The judge</b><br>Combines the two. Rule alarm <i>and</i> strange traffic means an attack. Rule alarm but normal traffic is probably a new device.</div></div>
+                <div class="helper"><i data-icon="help" data-size="32"></i><div><b>4. The explainer</b><br>An AI writes what happened and how to fix it. It only explains; it never decides.</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-  <aside class="col-side">
-    <article class="card" id="card-incidents">
-      <h2>The referee's notes <small>incidents, verdicts and AI explanations</small></h2>
-      <div id="incidents" class="incidents"><p class="empty">No incidents yet. The piste is quiet.</p></div>
-    </article>
+        <div class="help-page hidden" data-page="pipeline">
+          <h2>From packets to a verdict</h2>
+          <div class="flow">
+            <div class="flow-box"><i data-icon="folder" data-size="32"></i><b>Capture</b><span>a recording file, or live traffic on your own network</span></div>
+            <div class="flow-arrow">➜</div>
+            <div class="flow-box"><i data-icon="code" data-size="32"></i><b>Parser</b><span>reads each Ethernet frame and finds the ARP messages (type 0x0806)</span></div>
+            <div class="flow-arrow">➜</div>
+            <div class="flow-stack">
+              <div class="flow-box"><i data-icon="table" data-size="32"></i><b>Rule checker</b><span>who claims which IP?</span></div>
+              <div class="flow-box"><i data-icon="chart" data-size="32"></i><b>Kitsune AI</b><span>how strange is the traffic?</span></div>
+            </div>
+            <div class="flow-arrow">➜</div>
+            <div class="flow-box"><i data-icon="shield-green" data-size="32"></i><b>Judge</b><span>combines both into a verdict</span></div>
+            <div class="flow-arrow">➜</div>
+            <div class="flow-box"><i data-icon="help" data-size="32"></i><b>Explainer</b><span>plain-English summary and fixes</span></div>
+          </div>
+          <p>The AI model is <b>Kitsune</b> (Mirsky et al., NDSS 2018), a published model built from small "autoencoders". It is <b>not trained in advance</b>: it spends the first part of every recording learning what normal looks like, then gives every later packet a score for how strange it is. The alarm line is set from the scores it saw while learning.</p>
+        </div>
 
-    <article class="card" id="card-topology">
-      <h2>The piste <small>who talks to the gateway through whom</small></h2>
-      <svg id="topology" viewBox="0 0 420 330" role="img" aria-label="Network topology"></svg>
-    </article>
+        <div class="help-page hidden" data-page="verdicts">
+          <h2>How the judge decides</h2>
+          <div class="listview">
+            <table>
+              <thead><tr><th>Rule checker says</th><th>AI model says</th><th>Verdict</th><th>In plain words</th></tr></thead>
+              <tbody>
+                <tr><td>The router's IP changed owner</td><td>Traffic is strange</td><td><span class="pill red">Confirmed spoofing</span></td><td>Someone is pretending to be the router. Act now.</td></tr>
+                <tr><td>Another IP changed owner</td><td>Traffic is strange</td><td><span class="pill red">Probable spoofing</span></td><td>Someone is pretending to be another device.</td></tr>
+                <tr><td>An IP keeps flipping between two devices</td><td>Traffic looks normal</td><td><span class="pill orange">Suspicious</span></td><td>Repeated lying; a person should check.</td></tr>
+                <tr><td>An IP changed owner once</td><td>Traffic looks normal</td><td><span class="pill yellow">Likely harmless</span></td><td>Probably a new device, a new network card or a replaced router.</td></tr>
+                <tr><td>Nothing wrong with ARP</td><td>Traffic is strange</td><td><span class="pill orange">Unusual traffic</span></td><td>Something odd that isn't ARP spoofing (for example a port scan).</td></tr>
+                <tr><td>Nothing wrong</td><td>Traffic looks normal</td><td><span class="pill green">All clear</span></td><td>Nothing to do.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="muted">"Traffic is strange" means at least 3 packets around the event are above the alarm line, <i>and</i> they make up at least 20% of the packets at that moment, so one odd packet can't trigger it.</p>
+        </div>
 
-    <article class="card" id="card-feed">
-      <h2>ARP on the wire <small>last frames</small></h2>
-      <ol id="arp-feed" class="arp-feed"></ol>
-    </article>
-  </aside>
-</main>
+        <div class="help-page hidden" data-page="rules">
+          <h2>What the rule checker looks for</h2>
+          <div class="listview">
+            <table>
+              <thead><tr><th>Rule</th><th>What it means</th><th>How serious</th></tr></thead>
+              <tbody>
+                <tr><td><b>Router changed owner</b></td><td>The router's IP is suddenly claimed by a different MAC address.</td><td>Critical</td></tr>
+                <tr><td><b>IP changed owner</b></td><td>Any other IP is claimed by a device that isn't its real owner.</td><td>Medium</td></tr>
+                <tr><td><b>Flip-flop</b></td><td>An IP bounces between two devices: the real owner corrects it, the attacker lies again.</td><td>High</td></tr>
+                <tr><td><b>One device, many IPs</b></td><td>A single network card claims to be several different computers.</td><td>High</td></tr>
+                <tr><td><b>Unrequested answer</b></td><td>An "I am at this MAC" message that nobody asked for.</td><td>Low</td></tr>
+                <tr><td><b>Mismatched sender</b></td><td>The frame comes from one MAC but claims to be from another.</td><td>Medium</td></tr>
+                <tr><td><b>ARP scan / flood</b></td><td>One device asks about dozens of IPs in seconds (searching for victims), or floods the network.</td><td>Medium</td></tr>
+                <tr><td><b>DHCP-backed change</b></td><td>An IP moved right after the router's DHCP server handed it out. That's normal, so it's logged as harmless.</td><td>Low</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-<section class="card wide" id="evaluation">
-  <h2>Does it work? <small>measured against per-packet labels, no training involved</small></h2>
-  <div id="eval-body"></div>
-</section>
-
-<section class="card wide" id="how">
-  <h2>How ARPGuard works</h2>
-  <div class="canvas-wrap"><svg id="pipeline" viewBox="0 0 960 230" role="img" aria-label="Pipeline: capture, rules and Kitsune, fusion, LLM explainer, dashboard"></svg></div>
-  <div class="two-col">
-    <div>
-      <h3>Verdict fusion</h3>
-      <table class="sketch-table">
-        <thead><tr><th>Rule alert</th><th>Kitsune</th><th>Verdict</th></tr></thead>
-        <tbody>
-          <tr><td>Gateway conflict / flip-flop</td><td>High</td><td><span class="v v-red">Confirmed spoofing</span></td></tr>
-          <tr><td>Other IP conflict</td><td>High</td><td><span class="v v-red">Probable spoofing</span></td></tr>
-          <tr><td>Flip-flopping, any</td><td>Low</td><td><span class="v v-orange">Suspicious, review</span></td></tr>
-          <tr><td>Any one-off conflict</td><td>Low</td><td><span class="v v-yellow">Likely legitimate</span> (log only)</td></tr>
-          <tr><td>None</td><td>High</td><td><span class="v v-orange">Anomaly, not ARP</span></td></tr>
-          <tr><td>None</td><td>Low</td><td><span class="v v-green">Normal</span></td></tr>
-        </tbody>
-      </table>
-      <p class="note">"High" means at least 3 packets in the incident's window score above the threshold <em>and</em> they're at least 20% of that window. The AI never decides a verdict: it only explains the evidence the code produced, and its output is checked against that evidence.</p>
+        <div class="help-page hidden" data-page="glossary">
+          <h2>Glossary</h2>
+          <dl class="glossary">
+            <dt>IP address</dt><dd>A device's address on the network, like <code>192.168.1.10</code>. Programs use these.</dd>
+            <dt>MAC address</dt><dd>The hardware ID burned into a network card, like <code>b8:ac:6f:52:7e:10</code>. The first half tells you the maker (Dell, Apple, VMware…).</dd>
+            <dt>ARP</dt><dd>Address Resolution Protocol: the system that answers "which MAC address has this IP?" on a local network.</dd>
+            <dt>ARP cache</dt><dd>Each device's private address book of IP → MAC answers it has heard.</dd>
+            <dt>Gateway / router</dt><dd>The device that connects your network to the internet (here <code>192.168.1.1</code>). The favorite target, because all internet traffic goes through it.</dd>
+            <dt>ARP spoofing</dt><dd>Sending fake ARP answers so other devices send their traffic to the attacker.</dd>
+            <dt>Man-in-the-middle (MitM)</dt><dd>An attacker secretly sitting between two devices, able to read or change what they send.</dd>
+            <dt>DHCP</dt><dd>The service (usually in the router) that hands out IP addresses to devices when they join.</dd>
+            <dt>Kitsune</dt><dd>A published AI anomaly detector for network traffic. It learns "normal" on the fly and scores how unusual each packet is.</dd>
+            <dt>Anomaly score</dt><dd>How badly the model can rebuild a packet's statistics. Normal traffic scores low; strange traffic scores high.</dd>
+            <dt>Threshold (alarm line)</dt><dd>The score above which a packet counts as unusual. Set from the scores seen while the model was learning.</dd>
+            <dt>False positive</dt><dd>An alarm about something harmless, like a new printer. ARPGuard tries hard to avoid these.</dd>
+            <dt>Dynamic ARP Inspection (DAI)</dt><dd>A switch feature that blocks fake ARP answers. The best real fix.</dd>
+            <dt>pcap</dt><dd>A file containing recorded network traffic, made by Wireshark or tcpdump.</dd>
+          </dl>
+        </div>
+      </div>
     </div>
-    <div>
-      <h3>Rules on the binding table</h3>
-      <ul class="sketch-list">
-        <li><b>Gateway MAC change</b>: the gateway's IP claimed by an untrusted MAC (critical)</li>
-        <li><b>IP→MAC conflict</b>: any IP claimed by a MAC that isn't its owner</li>
-        <li><b>Flip-flop</b>: a binding bouncing between two MACs (re-poisoning)</li>
-        <li><b>One MAC, many IPs</b>: one card answering for other hosts' addresses</li>
-        <li><b>Unsolicited reply</b>: an "is-at" nobody asked for</li>
-        <li><b>ARP scan / flood</b>: host discovery sweeps and broadcast overhead</li>
-        <li><b>DHCP-backed change</b>: a move right after a DHCP ACK is logged as legitimate (DHCP snooping, in software)</li>
-      </ul>
-    </div>
-  </div>
-</section>
+  </section>
 
-<section class="card wide" id="mitigate">
-  <h2>Parry and riposte <small>fixing ARP spoofing on a switched LAN</small></h2>
-  <div class="fix-grid">
-    <div class="fix"><h3>Dynamic ARP Inspection</h3><p>The switch checks every ARP packet on untrusted ports against the DHCP snooping table and drops forged ones.</p><pre>ip arp inspection vlan 10
+  <section class="window wide" id="w-fixes" data-title="How to Fix ARP Spoofing" data-icon="wrench">
+    <div class="window-body">
+      <p class="infobar"><i data-icon="info"></i> <span>ARP can't be fixed by itself, but these protections stop the attack. The first two are the strongest and work together.</span></p>
+      <div class="fix-list">
+        <div class="fix"><i data-icon="shield-green" data-size="32"></i><div><h3>1. Turn on Dynamic ARP Inspection (DAI) on the switch</h3><p>The switch checks every ARP message against its list of who really owns each IP, and drops fake ones before they reach anyone.</p><pre>ip arp inspection vlan 10
 interface Gi0/1
- ip arp inspection trust</pre></div>
-    <div class="fix"><h3>DHCP snooping</h3><p>Builds the trusted IP↔MAC↔port table that DAI uses, and blocks rogue DHCP servers.</p><pre>ip dhcp snooping
+ ip arp inspection trust</pre></div></div>
+        <div class="fix"><i data-icon="shield-green" data-size="32"></i><div><h3>2. Turn on DHCP snooping</h3><p>Builds that trusted "who owns which IP" list from the router's DHCP replies, and blocks fake DHCP servers too.</p><pre>ip dhcp snooping
 ip dhcp snooping vlan 10
 interface Gi0/1
- ip dhcp snooping trust</pre></div>
-    <div class="fix"><h3>Port security</h3><p>Limit how many MACs a port may learn, so one cable can't impersonate a crowd.</p><pre>interface Gi0/5
+ ip dhcp snooping trust</pre></div></div>
+        <div class="fix"><i data-icon="shield-yellow" data-size="32"></i><div><h3>3. Limit devices per switch port (port security)</h3><p>One cable can't pretend to be a whole room of computers.</p><pre>interface Gi0/5
  switchport port-security
  switchport port-security maximum 2
- switchport port-security violation restrict</pre></div>
-    <div class="fix"><h3>Static ARP for the gateway</h3><p>On critical hosts, pin the router's MAC so forged replies can't overwrite it.</p><pre>arp -s 192.168.1.1 50:c7:bf:3a:1c:01
-netsh interface ipv4 add neighbors "Ethernet" 192.168.1.1 50-c7-bf-3a-1c-01</pre></div>
-    <div class="fix"><h3>Encrypt anyway</h3><p>HTTPS, SSH and VPNs keep intercepted traffic unreadable. Treat certificate warnings as an alarm.</p></div>
-    <div class="fix"><h3>IPv6 next</h3><p>NDP replaces ARP and has the same weakness (spoofed Neighbor Advertisements); RA Guard and ND inspection are its DAI.</p></div>
-  </div>
-</section>
+ switchport port-security violation restrict</pre></div></div>
+        <div class="fix"><i data-icon="shield-yellow" data-size="32"></i><div><h3>4. Pin the router's MAC on important computers</h3><p>A fixed (static) ARP entry can't be overwritten by fake answers.</p><pre>arp -s 192.168.1.1 50:c7:bf:3a:1c:01
+netsh interface ipv4 add neighbors "Ethernet" 192.168.1.1 50-c7-bf-3a-1c-01</pre></div></div>
+        <div class="fix"><i data-icon="info" data-size="32"></i><div><h3>5. Use encryption everywhere</h3><p>HTTPS, SSH and VPNs keep intercepted traffic unreadable. Never click through a certificate warning: it can be a sign of this attack.</p></div></div>
+        <div class="fix"><i data-icon="info" data-size="32"></i><div><h3>Next: IPv6</h3><p>IPv6 replaces ARP with "Neighbor Discovery", which has the same weakness. Switch features called RA Guard and ND Inspection protect it.</p></div></div>
+      </div>
+    </div>
+  </section>
 
-<footer class="footer">
-  <p>ARPGuard · rules + <a href="https://github.com/ymirsky/Kitsune-py">Kitsune</a> (Mirsky et al., NDSS 2018) + an LLM referee. The demo captures are synthetic and labelled; see <code>eval/</code> to run the real <a href="https://archive.ics.uci.edu/dataset/516/kitsune+network+attack">Kitsune ARP MitM</a> capture.</p>
-  <p class="dim">Only sniff networks you own. <button class="linkish" id="theme-toggle">Switch to chalkboard</button></p>
+  <p class="footer-note">ARPGuard · rules + <a href="https://github.com/ymirsky/Kitsune-py">Kitsune</a> (Mirsky et al., NDSS 2018) + an AI explainer. The demo recordings are synthetic and labeled. Only monitor networks you own. <a href="https://github.com/Hussaincodes01/ARP-Network-Gaurd">Source code</a></p>
+</div>
+
+<!-- ======================= taskbar & start menu ======================= -->
+<div class="start-menu hidden" id="start-menu" role="menu" aria-label="Start menu">
+  <div class="sm-head"><i data-icon="shield-blue" data-size="40"></i><span>ARPGuard</span></div>
+  <div class="sm-body">
+    <ul class="sm-left">
+      <li><button role="menuitem" data-wizard><i data-icon="wizard" data-size="28"></i><span><b>Welcome guide</b><small>Start here: a 1-minute tour</small></span></button></li>
+      <li><button role="menuitem" data-mode-go="replay"><i data-icon="play" data-size="28"></i><span><b>Watch the demo</b><small>Replay a recorded attack</small></span></button></li>
+      <li><button role="menuitem" data-mode-go="upload"><i data-icon="upload" data-size="28"></i><span><b>Analyze my capture</b><small>Upload a .pcap file</small></span></button></li>
+      <li><button role="menuitem" data-mode-go="live"><i data-icon="radar" data-size="28"></i><span><b>Live monitoring</b><small>Watch your own network</small></span></button></li>
+    </ul>
+    <ul class="sm-right">
+      <li><button role="menuitem" data-open="w-help"><i data-icon="help" data-size="22"></i>How ARPGuard works</button></li>
+      <li><button role="menuitem" data-open="w-help" data-help-go="glossary"><i data-icon="question" data-size="22"></i>Glossary</button></li>
+      <li><button role="menuitem" data-open="w-fixes"><i data-icon="wrench" data-size="22"></i>How to fix ARP spoofing</button></li>
+      <li><button role="menuitem" data-open="w-results"><i data-icon="results" data-size="22"></i>Results</button></li>
+      <li class="sep"></li>
+      <li><button role="menuitem" data-scheme-next><i data-icon="palette" data-size="22"></i>Color scheme: <span id="scheme-name">Blue</span></button></li>
+      <li><a role="menuitem" href="https://github.com/Hussaincodes01/ARP-Network-Gaurd" target="_blank" rel="noopener"><i data-icon="code" data-size="22"></i>Source code</a></li>
+    </ul>
+  </div>
+  <div class="sm-foot">
+    <button data-restart><i data-icon="refresh" data-size="22"></i>Restart demo</button>
+    <button data-pause><i data-icon="power" data-size="22"></i>Pause</button>
+  </div>
+</div>
+
+<div class="balloon hidden" id="balloon" role="status" aria-live="polite">
+  <button class="balloon-close" aria-label="Close notification">×</button>
+  <div class="balloon-title" id="balloon-title"></div>
+  <div class="balloon-text" id="balloon-text"></div>
+</div>
+
+<footer class="taskbar">
+  <button class="start-btn" id="start-btn" aria-haspopup="menu" aria-expanded="false"><i data-icon="shield-blue" data-size="20"></i><span>start</span></button>
+  <div class="task-buttons" id="task-buttons"></div>
+  <div class="tray">
+    <button class="tray-icon" id="tray-shield" title="Security status"></button>
+    <span class="tray-clock" id="tray-clock" title="Position in the recording">0:00</span>
+  </div>
 </footer>
 
-<script src="vendor/rough.min.js"></script>
-<script src="js/fencer.js"></script>
-<script src="js/sketch.js"></script>
+<!-- ======================= welcome wizard ======================= -->
+<div class="modal hidden" id="wizard" role="dialog" aria-modal="true" aria-labelledby="wiz-title">
+  <section class="window dialog">
+    <div class="title-bar"><div class="title-bar-text"><i data-icon="wizard"></i> <span>Welcome to ARPGuard</span></div>
+      <div class="title-bar-controls"><button aria-label="Close" data-act="wiz-close"></button></div></div>
+    <div class="wizard-body">
+      <div class="wizard-side"><i data-icon="shield-blue" data-size="64"></i><span id="wiz-step">Step 1 of 4</span></div>
+      <div class="wizard-main">
+        <h2 id="wiz-title"></h2>
+        <div id="wiz-content"></div>
+      </div>
+    </div>
+    <div class="wizard-buttons">
+      <button class="btn" id="wiz-skip">Skip tour</button>
+      <span class="spacer"></span>
+      <button class="btn" id="wiz-back">&lt; Back</button>
+      <button class="btn default" id="wiz-next">Next &gt;</button>
+    </div>
+  </section>
+</div>
+
+<script src="js/icons.js"></script>
+<script src="js/charts.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

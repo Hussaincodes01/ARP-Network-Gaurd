@@ -22,14 +22,16 @@ from arpguard.ai.explainer import explain_result  # noqa: E402
 from eval.evaluate import METHOD_LABELS, evaluate_capture, markdown  # noqa: E402
 
 DEMOS = [
-    {"id": "attack", "title": "ARP MitM attack (synthetic LAN)",
+    {"id": "attack", "title": "Office network with an ARP spoofing attack",
      "pcap": "data/arp_mitm_synthetic.pcap", "labels": "data/arp_mitm_synthetic_labels.csv",
-     "blurb": "A small office LAN. A smart plug takes over an IP via DHCP, the printer's NIC is replaced, "
-              "a MacBook port-scans the NVR, then a Kali VM runs an Ettercap-style ARP poisoning attack."},
-    {"id": "benign", "title": "Home network, no attack (synthetic)",
+     "blurb": "A small office network (simulated, 13 minutes). A smart plug joins, the printer gets a new "
+              "network card, a laptop scans another computer, and then an attacker's virtual machine starts "
+              "pretending to be the router (an Ettercap-style ARP spoofing attack)."},
+    {"id": "benign", "title": "Same network, no attack",
      "pcap": "data/home_benign_synthetic.pcap", "labels": None,
-     "blurb": "Another day on the same LAN: a new device joins via DHCP and the ISP router is swapped "
-              "for a backup router with a different MAC. No attack."},
+     "blurb": "Another day on the same network (simulated, 10 minutes): a new device joins, and the internet "
+              "router is swapped for a backup router with a different MAC address. There is no attack: "
+              "ARPGuard should stay calm."},
 ]
 
 

@@ -1,4 +1,4 @@
-# ARPGuard: En Garde
+# ARPGuard
 
 AI-assisted ARP spoofing detection for a networking course (Module III: Ethernet & ARP).
 
@@ -16,9 +16,26 @@ flags spoofing with three parts:
    LLM never decides a verdict**: it only sees the evidence the code produced, and its output is checked
    against that evidence.
 
-The dashboard is a hand-drawn "En Garde" sketchbook. A fencer mascot lunges when spoofing is confirmed,
-and the verdict shows on a fencing scoring box: green for all clear, white for off-target (an anomaly or a
-legitimate change), red for a touch.
+**Live demo: https://arpguard.vercel.app**
+
+The dashboard looks like a Windows XP desktop, and every part of it explains itself in plain English:
+
+* **Welcome guide.** A 4-step wizard on first visit covers what ARP is, how the attack works, how ARPGuard
+  catches it and how to use the page.
+* **Control Center.** Replay a recording, upload your own capture or start live monitoring. A "story" list
+  tells you what happens in the recording; click a step to jump there.
+* **Security Status.** A green, yellow or red shield with one sentence saying what the current verdict means.
+  A notification balloon pops up from the taskbar when something happens.
+* **Alerts and Explanations.** Every incident, with what happened, who the attacker is, who's affected, why it
+  matters and how to fix it.
+* **AI Anomaly Monitor**, a Task-Manager-style graph of the Kitsune score with the alarm line. **Who Owns Each
+  Address?** shows each IP's owner over time, Disk-Defragmenter style. Also: the **ARP table**, a **network
+  map** showing the detour through the attacker, and a **Command Prompt** of raw ARP messages.
+* **Help and Support** (basics, how it works, verdicts, rules, glossary), **How to Fix ARP Spoofing** and
+  **Results**, all from the start menu.
+* Working minimize, maximize and close buttons, a taskbar, and the Blue, Olive and Silver color schemes.
+
+![ARPGuard during the attack](report/screenshots/dashboard-attack.png)
 
 ```
  Input                 Detection                         Explanation        Output
@@ -146,7 +163,7 @@ arpguard/
   ai/    explainer.py    evidence builder, Claude/Ollama/template providers, guardrails
   api/   main.py         FastAPI: /api/health, /api/analyze, /api/explain, /api/live/*
   pipeline.py            Session: packets → rules + Kitsune → fusion → result JSON
-public/                  the dashboard (HTML/CSS/JS, rough.js), plus precomputed demo data in data/
+public/                  the dashboard (plain HTML/CSS/JS, XP-style theme), plus precomputed demo data in data/
 data/                    synthetic labelled captures (see data/README.md)
 eval/evaluate.py         rules vs Kitsune vs combined: detection rate, FPR, P/R/F1, time-to-detect
 scripts/                 make_synthetic_capture.py, build_demo.py, fetch_kitsune.py
@@ -168,14 +185,14 @@ report/                  screenshots and figures for the write-up
 
 ## Viva demo (5 minutes)
 
-1. Replay demo at 10x: a normal LAN while Kitsune learns (the grey hatched band).
-2. t ≈ 332 s: a smart plug takes .12 via DHCP. The rule fires, the fusion says *likely legitimate*, and the
-   fencer salutes.
-3. t ≈ 410 s: a port scan. Kitsune spikes, no ARP rule fires: *anomaly, not ARP-related*.
-4. t ≈ 450 s: the Ettercap attack. An ARP sweep, then the gateway's MAC flips to a VMware MAC. The rules fire,
-   the score crosses the threshold, the red lamp lights and the fencer lunges: *confirmed spoofing*.
-   Open the referee's notes: attacker, victims, impact, and DAI/DHCP-snooping commands.
-5. Switch to the benign capture: the router swap is classified as legitimate. Then show the evaluation table.
+1. Open the site and click through the **Welcome guide** (or start from step 2).
+2. Press **▶ Play** at 10x: a normal LAN while Kitsune learns (the gray area of the anomaly graph).
+3. 5:32: a smart plug gets .12 from DHCP. The rule fires, but traffic is normal: *harmless change*.
+4. 6:51: a port scan. The AI graph spikes but no ARP rule fires: *unusual traffic (not ARP)*.
+5. 7:30: the Ettercap attack. An ARP scan, then the router's MAC flips to a VMware MAC. The rules fire, the
+   score crosses the alarm line, the shield turns red, a balloon pops up and the network map shows the detour:
+   *ARP spoofing attack!* Open **Alerts and Explanations** for the attacker, the victims and the fixes.
+6. Switch the recording to the no-attack one: the router swap comes out as harmless. Then open **Results**.
 
 ## Limitations
 
@@ -191,5 +208,5 @@ report/                  screenshots and figures for the write-up
 Kitsune and KitNET: Yisroel Mirsky et al., *Kitsune: An Ensemble of Autoencoders for Online Network
 Intrusion Detection*, NDSS 2018 ([code](https://github.com/ymirsky/Kitsune-py), MIT;
 [dataset](https://archive.ics.uci.edu/dataset/516/kitsune+network+attack)).
-[rough.js](https://roughjs.com) (MIT) for the hand-drawn charts. Fonts: Permanent Marker, Patrick Hand
-and Courier Prime (Google Fonts, OFL).
+The look is inspired by Windows XP's "Luna" theme. All icons and the wallpaper are original drawings
+(CSS and SVG), with no Microsoft logos or image files.
